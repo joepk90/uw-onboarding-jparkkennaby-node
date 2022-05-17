@@ -1,8 +1,7 @@
 const express = require('express');
+const getDate = require('./date/date');
 const app = express()
 app.use(express.json());
-
-const getDate = () => new Date();
 
 app.use('/',  async (req, res) => {
     res.send(getDate());
