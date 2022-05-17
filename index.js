@@ -5,8 +5,8 @@ const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ timeout: 5000 });
 
 const counter = new client.Counter({
-    name: 'onboarding_request_count',
-    help: 'onboarding_request_count',
+    name: 'onboarding_request_count', // requests_count
+    help: "A counter of the number of total requests received",
   });
   
 
