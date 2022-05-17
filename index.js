@@ -4,6 +4,12 @@ const client =  require('prom-client');
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ timeout: 5000 });
 
+const counter = new client.Counter({
+    name: 'onboarding_request_count',
+    help: 'onboarding_request_count',
+  });
+  
+
 const getDate = require('./date/date');
 
 const app = express()
@@ -16,7 +22,20 @@ app.get('/__/metrics', async (req, res) => {
     return res.send(metrics)
 });
 
-app.get('/',  async (req, res) =>  res.send(getDate()));
+app.get('/',  async (req, res) => {
+    
+    counter.inc(); // Increment by 1
+    
+    let count;
+    if (counter.hashMap[''].value) {
+        count = counter.hashMap[''].value;
+    }
+    
+    console.log(`${counter.name}: ${count}`);
+    
+    res.send(getDate());
+    
+});
 
 app.listen(8080, () => {
     console.log(`Example app listening on port 8080`)
