@@ -1,0 +1,44 @@
+version: 2.1
+
+jobs:
+  build_and_test:
+    docker:
+      - image: cimg/node:18.0.0
+    steps:
+      - checkout # clone repo
+      - run:
+          name: Installing dependencies
+          command: make install
+      - run:
+          name: Run tests
+          command: make test
+
+  dockerize_and_deploy:
+    docker:
+      - image: cimg/node:18.0.0
+    steps:
+      - checkout # clone repo
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: false
+      - run:
+          name: Docker login
+          command: make docker_login
+      - run:
+          name: Docker build
+          command: make docker_build
+      - run:
+          name: Docker push
+          command: make docker_push
+      - run:
+          name: Deploy
+          command: make deploy
+
+workflows:
+  build:
+    jobs:
+      - build_and_test
+      - dockerize_and_deploy:
+          requires:
+            - build_and_test
+          context: onboarding
